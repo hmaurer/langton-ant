@@ -39,18 +39,7 @@
       ready: function () {
         var svg = SVG(this.$.paper).size('100%', '100%')
         svg.style('background', '#eee')
-        var links = svg.group();
-        var markers = svg.group();
         var nodes = svg.group();
-
-        // Add draggable circles
-    //    var g1 = nodes.rect(20, 20).fill("#C2185B");
-  //      g1.translate(0, 0);
-        //g1.translate(window.innerWidth / 2 - 10, window.innerHeight / 2 - 10);
-
-//        var g3 = nodes.group().translate(200, 400);
-      //  g3.circle(100).fill("#FF5252");
-
 
         nodes.translate(window.innerWidth / 2 - 10, window.innerHeight / 2 - 10);
 
@@ -62,9 +51,11 @@
 
         var antState = {dir: 0, x: 0, y: 0};
         var f = function () {
-          antState = this._iterate(antState);
-          if (!antState) {
-            return;
+          for (var i = 0; i < 10; i++) {
+            antState = this._iterate(antState);
+            if (!antState) {
+              return;
+            }
           }
           window.requestAnimationFrame(f);
         }
