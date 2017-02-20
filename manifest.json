@@ -1,0 +1,6 @@
+{
+  "name": "langton-ant",
+  "short_name": "langton-ant",
+  "start_url": "/",
+  "display": "standalone"
+}

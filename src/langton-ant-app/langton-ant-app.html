@@ -1,0 +1,156 @@
+<script src="../../bower_components/svg.js/dist/svg.js"></script>
+<script src="../../svg.pan-zoom.js"></script>
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="langton-ant-app">
+  <template>
+    <style>
+      :host {
+        display: block;
+        height: 100%;
+      }
+
+      #paper {
+        height: 100%;
+      }
+    </style>
+    <div id="paper"></div>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'langton-ant-app',
+
+      properties: {
+        prop1: {
+          type: String,
+          value: 'langton-ant-app',
+        },
+      },
+
+      created: function () {
+        this.world = [];
+        this.worldBound = 100;
+        this.cellSize = 20;
+      },
+
+      ready: function () {
+        var svg = SVG(this.$.paper).size('100%', '100%')
+        svg.style('background', '#eee')
+        var links = svg.group();
+        var markers = svg.group();
+        var nodes = svg.group();
+
+        // Add draggable circles
+    //    var g1 = nodes.rect(20, 20).fill("#C2185B");
+  //      g1.translate(0, 0);
+        //g1.translate(window.innerWidth / 2 - 10, window.innerHeight / 2 - 10);
+
+//        var g3 = nodes.group().translate(200, 400);
+      //  g3.circle(100).fill("#FF5252");
+
+
+        nodes.translate(window.innerWidth / 2 - 10, window.innerHeight / 2 - 10);
+
+        // Make the group pannable and zoomable
+        nodes.panZoom();
+        this.nodes = nodes;
+        window._iterate = this._iterate.bind(this);
+        window._getCellState = this._getCellState.bind(this);
+
+        var antState = {dir: 0, x: 0, y: 0};
+        var f = function () {
+          antState = this._iterate(antState);
+          if (!antState) {
+            return;
+          }
+          window.requestAnimationFrame(f);
+        }
+
+        f();
+      },
+
+      _invertCell(x, y) {
+        if (!this.world[x]) {
+          this.world[x] = [];
+        }
+        if (!this.world[x][y]) {
+          var node = this.nodes.rect(this.cellSize, this.cellSize).fill("#C2185B");
+          node.translate(x * this.cellSize, y * this.cellSize);
+          this.world[x][y] = {
+            state: true,
+            node: node,
+          };
+        }
+        else {
+          var cell = this.world[x][y];
+          cell.state = !cell.state;
+          cell.node.fill(cell.state ? "transparent" : "#C2185B");
+        }
+      },
+
+      _getCellState(x, y) {
+        if (!this.world[x]) {
+          return false;
+        }
+        if (!this.world[x][y]) {
+          return false;
+        }
+        else {
+          return this.world[x][y].state;
+        }
+      },
+
+      _iterate(antState) {
+        var {dir, x, y} = antState;
+        var newDir, newX, newY;
+
+        if (this._getCellState(x, y)) {
+          newDir = mod(dir - 1, 4);
+        }
+        else {
+          newDir = mod(dir + 1, 4);
+        }
+
+        switch (newDir) {
+        case 0:
+          newX = x;
+          newY = y - 1;
+          break;
+        case 1:
+          newX = x + 1;
+          newY = y;
+          break;
+        case 2:
+          newX = x;
+          newY = y + 1;
+          break;
+        case 3:
+          newX = x - 1;
+          newY = y;
+          break;
+        }
+
+        if (Math.abs(newX) > this.worldBound || Math.abs(newY) > this.worldBound) {
+          console.log('stop iterating, ant would leave world.');
+          return false;
+        }
+
+        this._invertCell(x, y);
+
+        return {
+          dir: newDir,
+          x: newX,
+          y: newY
+        };
+      }
+
+    });
+
+    function mod(x, n) {
+      return ((x % n) + n) % n;
+    }
+  </script>
+</dom-module>
