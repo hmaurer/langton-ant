@@ -136,13 +136,15 @@
 
         var root = svg.group();
         this.root = root;
-        root.translate(window.innerWidth / 2 - 10, window.innerHeight / 2 - 10);
+//        root.translate(window.innerWidth / 2 - 10, window.innerHeight / 2 - 10);
         this.nodes = root.group();
         this.antNode = root.group();
         this.antNode.svg(ant).scale(0.05);
         this.antNode.translate(-4, -4);
 
-        root.panZoom();
+        this.pz = root.panZoom();
+
+        this.pz.setPosition((window.innerWidth / 2 - 10), (window.innerHeight / 2 - 10));
 
         var loop = function () {
           if (!this.paused && this.antState && this.iteration < 13000) {
@@ -164,6 +166,8 @@
         this.antNode.front();
         this.antState = {dir: 0, x: 0, y: 0};
         this.iteration = 0;
+        this.pz.setPosition((window.innerWidth / 2 - 10), (window.innerHeight / 2 - 10));
+        this.pz.zoom(1);
       },
 
       _invertCell: function (x, y) {
