@@ -1,0 +1,9 @@
+{
+  "entrypoint": "index.html",
+  "shell": "src/langton-ant-app/langton-ant-app.html",
+  "fragments": [
+  ],
+  "includeDependencies": [
+    "bower_components/webcomponentsjs/webcomponents-lite.js"
+  ]
+}

@@ -1,5 +1,5 @@
-<script src="../../bower_components/svg.js/dist/svg.js"></script>
-<script src="../../svg.pan-zoom.js"></script>
+<script src="/bower_components/svg.js/dist/svg.js"></script>
+<script src="/svg.pan-zoom.js"></script>
 
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
@@ -11,10 +11,19 @@
         height: 100%;
       }
 
+      #iteration-info {
+        position: absolute;
+        top: 10px;
+        left: 20px;
+      }
+
       #paper {
         height: 100%;
       }
     </style>
+    <div id="iteration-info">
+      Iteration = [[iteration]]
+    </div>
     <div id="paper"></div>
   </template>
 
@@ -27,6 +36,10 @@
         prop1: {
           type: String,
           value: 'langton-ant-app',
+        },
+        iteration: {
+          type: Number,
+          value: 0
         },
       },
 
@@ -56,14 +69,15 @@
             if (!antState) {
               return;
             }
+            this.iteration += 1;
           }
-          window.requestAnimationFrame(f);
+          window.requestAnimationFrame(f.bind(this));
         }
 
-        f();
+        f.bind(this)();
       },
 
-      _invertCell(x, y) {
+      _invertCell: function (x, y) {
         if (!this.world[x]) {
           this.world[x] = [];
         }
@@ -82,7 +96,7 @@
         }
       },
 
-      _getCellState(x, y) {
+      _getCellState: function (x, y) {
         if (!this.world[x]) {
           return false;
         }
@@ -94,8 +108,8 @@
         }
       },
 
-      _iterate(antState) {
-        var {dir, x, y} = antState;
+      _iterate: function (antState) {
+        var dir = antState.dir, x = antState.x, y = antState.y;
         var newDir, newX, newY;
 
         if (this._getCellState(x, y)) {
